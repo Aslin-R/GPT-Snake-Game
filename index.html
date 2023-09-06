@@ -4,15 +4,19 @@
     <title>Snake Game</title>
     <style>
         body {
-            background-color: black;
+            
+            background-color: white; /* Changed the background to white */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             flex-direction: column;
+            font-family: sans-serif;
         }
         #game-container {
+            position: relative;
+            margin-top: 200px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,14 +24,15 @@
         #game-board {
             width: 400px;
             height: 400px;
-            border: 2px solid white;
+            border: 6px solid black; /* Changed the border color to black */
             position: relative;
         }
         .snake {
             width: 20px;
             height: 20px;
-            background-color: lightgreen; /* Changed snake color to light green */
+            background-color: lightgreen;
             position: absolute;
+            border: 1px solid darkgreen;
         }
         .food {
             width: 20px;
@@ -35,14 +40,28 @@
             background-color: red;
             position: absolute;
         }
+        .snake-head {
+            width: 24px; /* Increased head size to differentiate the head and the tail */
+            height: 24px; /* Increased head size */
+            background-color: lightgreen;
+            position: absolute;
+            border: 1px solid darkgreen;
+        }
         #score {
-            color: white;
+            color: black; /* Changed the text color to black */
             font-size: 24px;
             margin-top: 20px;
         }
+        #game-over {
+            color: rgb(255, 0, 0); /* Game Over message text color */
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
         #restart-button {
-            background-color: white;
-            color: black;
+            background-color: black; /* Restart button background color */
+            color: white; /* Restart button text color */
             padding: 10px 20px;
             border: none;
             cursor: pointer;
@@ -54,15 +73,17 @@
 <body>
     <div id="game-container">
         <div id="game-board">
-            <div id="score">Score: 0</div>
+            <!-- Put the score display here -->
         </div>
         <h1 id="score-display">Score: 0</h1>
-        <button id="restart-button">Restart</button>
+        <h2 id="game-over">Game Over!</h2>
+        <button id="restart-button" onclick="restartGame()">Restart</button>
     </div>
     <script>
         const board = document.getElementById('game-board');
         const scoreDisplay = document.getElementById('score');
         const scoreDisplayH1 = document.getElementById('score-display');
+        const gameOverMessage = document.getElementById('game-over');
         const restartButton = document.getElementById('restart-button');
 
         const gridSize = 20;
@@ -79,9 +100,12 @@
             board.innerHTML = '';
 
             // Draw the snake
-            snake.forEach(segment => {
+            snake.forEach((segment, index) => {
                 const snakeSegment = document.createElement('div');
                 snakeSegment.classList.add('snake');
+                if (index === 0) {
+                    snakeSegment.classList.add('snake-head');
+                }
                 snakeSegment.style.left = segment.x * gridSize + 'px';
                 snakeSegment.style.top = segment.y * gridSize + 'px';
                 board.appendChild(snakeSegment);
@@ -157,6 +181,7 @@
 
         function gameOver() {
             clearInterval(gameInterval);
+            gameOverMessage.style.display = 'block';
             restartButton.style.display = 'block';
         }
 
@@ -166,6 +191,7 @@
             direction = 'right';
             score = 0;
             scoreDisplayH1.textContent = 'Score: 0';
+            gameOverMessage.style.display = 'none';
             restartButton.style.display = 'none';
             gameInterval = setInterval(move, snakeSpeed);
             generateFood();
@@ -198,3 +224,5 @@
     </script>
 </body>
 </html>
+
+
