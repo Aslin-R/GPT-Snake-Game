@@ -10,6 +10,12 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         #game-board {
             width: 400px;
@@ -20,7 +26,7 @@
         .snake {
             width: 20px;
             height: 20px;
-            background-color: green;
+            background-color: lightgreen; /* Changed snake color to light green */
             position: absolute;
         }
         .food {
@@ -32,19 +38,32 @@
         #score {
             color: white;
             font-size: 24px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            margin-top: 20px;
+        }
+        #restart-button {
+            background-color: white;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="game-board">
-        <div id="score">Score: 0</div>
+    <div id="game-container">
+        <div id="game-board">
+            <div id="score">Score: 0</div>
+        </div>
+        <h1 id="score-display">Score: 0</h1>
+        <button id="restart-button">Restart</button>
     </div>
     <script>
         const board = document.getElementById('game-board');
         const scoreDisplay = document.getElementById('score');
+        const scoreDisplayH1 = document.getElementById('score-display');
+        const restartButton = document.getElementById('restart-button');
 
         const gridSize = 20;
         const snakeSpeed = 200; // milliseconds
@@ -54,6 +73,7 @@
         let food = { x: 5, y: 5 };
         let direction = 'right';
         let score = 0;
+        let gameInterval;
 
         function draw() {
             board.innerHTML = '';
@@ -98,7 +118,7 @@
             // Check for collision with food
             if (head.x === food.x && head.y === food.y) {
                 score += 10;
-                scoreDisplay.textContent = 'Score: ' + score;
+                scoreDisplayH1.textContent = 'Score: ' + score;
                 generateFood();
             } else {
                 snake.pop();
@@ -136,13 +156,27 @@
         }
 
         function gameOver() {
-            alert('Game Over! Your Score: ' + score);
-            location.reload(); // Reload the page to restart the game
+            clearInterval(gameInterval);
+            restartButton.style.display = 'block';
         }
+
+        function restartGame() {
+            snake = [{ x: 10, y: 10 }];
+            food = { x: 5, y: 5 };
+            direction = 'right';
+            score = 0;
+            scoreDisplayH1.textContent = 'Score: 0';
+            restartButton.style.display = 'none';
+            gameInterval = setInterval(move, snakeSpeed);
+            generateFood();
+            draw();
+        }
+
+        restartButton.addEventListener('click', restartGame);
 
         generateFood();
         draw();
-        setInterval(move, snakeSpeed);
+        gameInterval = setInterval(move, snakeSpeed);
 
         // Handle user input
         document.addEventListener('keydown', event => {
